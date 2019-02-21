@@ -4,20 +4,22 @@ In this Project I am playing around with custom TypeScript Decorators for the An
 
 ## PropertyStream
 
-@PropertyStream() automatically creates a RxJS stream to a corresponding property,
+<b>@PropertyStream(sourceKey?, propertySubject?)</b><br>
+automatically creates a RxJS stream to a corresponding property,
 i.e. whenever the corresponding property gets updated, the newly created stream will emit accordingly.
 
-@param sourceKey
+<i>sourceKey</i><br>
 The key of the property which should be streamed. Defaults to the annotated property-key, but removing all "$" signs.
 e.g. if you annotate a property with the key "foo$", the streamed property will default to "foo"
 
-@param propertySubject
+<i>propertySubject</i><br>
 The subject which is used to stream the corresponding property. Defaults to a ReplaySubject with buffer-size 1.
 
 
 ## Memoize
 
-@Memoize() easily applies the concept of memoization to a given function.
+<b>@Memoize()</b><br>
+easily applies the concept of memoization to a given function.
 
 i.e. whenever a function is called with the same arguments more than once, the cached result will be returned immediately instead of
 running the function body again.
