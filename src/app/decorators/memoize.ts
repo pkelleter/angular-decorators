@@ -4,21 +4,33 @@
  * running the function body again.
  * This approach is called memoization and naturally should only be applied to pure functions (no side-effects, always returns the same
  * value for a given set of arguments)
+ *
+ * Note: @Memoize() is implemented on the class-layer, which means that caches will be shared among multiple instances of the same class
  */
 
 export function Memoize(): MethodDecorator {
-  return function(target: object, propertyKey: string, descriptor: PropertyDescriptor) {
-    const original = descriptor.value;
-    const knownResults = new Map<string, unknown>();
+  return function(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    if (!target.__allCaches) {
+      target.__allCaches = new Map<string, Map<string, unknown>>();
+    }
+
+    const originalFn = descriptor.value;
     descriptor.value = function(...args: unknown[]) {
+      const cache = getCache(target, propertyKey);
       const cacheKey = JSON.stringify(args);
-      if (knownResults.has(cacheKey)) {
-        return knownResults.get(cacheKey);
+      if (!cache.has(cacheKey)) {
+        cache.set(cacheKey, originalFn.apply(this, args));
       }
-      const result = original.apply(this, args);
-      knownResults.set(cacheKey, result);
-      return result;
+      return cache.get(cacheKey);
     };
+
     return descriptor;
   };
+}
+
+function getCache(target: any, propertyKey: string) {
+  if (!target.__allCaches.has(propertyKey)) {
+    target.__allCaches.set(propertyKey, new Map<string, unknown>());
+  }
+  return target.__allCaches.get(propertyKey);
 }
