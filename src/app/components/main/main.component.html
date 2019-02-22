@@ -1,3 +1,13 @@
-<div>{{ name$ | async }}</div>
-<app-sub *ngIf="subComponentVisible"></app-sub>
-<app-sub *ngIf="subComponentVisible"></app-sub>
+<div>Main Component</div>
+<div>{{ name }}</div>
+<div>
+  <app-sub *ngIf="subComponentsVisible"
+           [id]="1"
+           [name]="name"></app-sub>
+  <app-sub *ngIf="subComponentsVisible"
+           [id]="2"
+           [name]="name"></app-sub>
+  <app-sub *ngIf="subComponentsVisible"
+           [id]="3"
+           [name]="name"></app-sub>
+</div>

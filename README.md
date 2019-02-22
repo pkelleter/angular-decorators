@@ -1,28 +1,30 @@
 # Custom TypeScript Decorators for Angular
 
-In this Project I am playing around with custom TypeScript Decorators for the Angular Framework. My goal is to create some (hopefully) generally useful decorators which can help everyone to remove some boilerplate code from their Angular projects.
+Several custom TypeScript Decorators for the Angular Framework, making the live of Angular developers easier.
 
 ## PropertyStream
 
 <b>@PropertyStream(sourceKey?)</b><br>
-automatically creates a RxJS stream to a corresponding property,
-i.e. whenever the corresponding property gets updated, the newly created stream will emit accordingly.
+Automatically creates a RxJS stream to a corresponding property,
+i.e. whenever the corresponding property gets updated, the newly created stream will emit accordingly.<br>
+When the component is destroyed, the corresponding stream will complete.
 
 <i>sourceKey</i><br>
-The key of the property which should be streamed. Defaults to the annotated property-key, but removing all "$" signs.
-e.g. if you annotate a property with the key "foo$", the streamed property will default to "foo"
+The key of the property which should be streamed.<br> 
+Defaults to the annotated property-key itself, while remove all "$" signs,
+e.g. if you annotate the generated stream "myProperty$", the corresponding property will default to "myProperty".
 
 ## Memoize
 
-<b>@Memoize()</b><br>
-easily applies the concept of memoization to a given function.
-
-i.e. whenever a function is called with the same arguments more than once, the cached result will be returned immediately instead of
-running the function body again.
+<b>@Memoize(sharedCache?)</b><br>
+Applies the concept of memoization to a given function, i.e. whenever a function is called with the same arguments more than once, the cached result will be returned immediately instead of
+running the function body again.<br>
 This approach is called memoization and naturally should only be applied to pure functions (no side-effects, always returns the same 
 value for a given set of arguments)
 
-<b>Note:</b> @Memoize() is implemented on the class-layer, which means that <b>caches will be shared among multiple instances of the same class.</b>
+<i>sharedCache</i><br>
+By default the memoization cache will be shared amongst multiple instances of the same class.
+If a new cache should be created for every instance of the given class instead, "sharedCache" should to be set to "false" instead
 
 ## EmitOnDestroy
 

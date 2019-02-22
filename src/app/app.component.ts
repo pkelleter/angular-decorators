@@ -6,12 +6,4 @@ import {Component} from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-
-  public name: string;
-  private counter = 1;
-
-  constructor() {
-    setInterval(() => this.name = 'decorators ' + this.counter++, 1000);
-  }
-
 }

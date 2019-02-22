@@ -1,5 +1,7 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Memoize} from '../../decorators/memoize';
+import {PropertyStream} from '../../decorators/property-stream';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-sub',
@@ -8,11 +10,24 @@ import {Memoize} from '../../decorators/memoize';
 })
 export class SubComponent implements OnInit, OnDestroy {
 
+  @Input()
+  public id: number;
+
+  @Input()
+  public name: string;
+
+  @PropertyStream()
+  public name$: Observable<string>;
+
   constructor() {
   }
 
   public ngOnInit() {
-    this.performMath();
+    ({
+      0: () => void 0,
+      1: () => this.performMath(),
+      2: () => this.performSubscriptions()
+    })[0]();
   }
 
   public ngOnDestroy() {
@@ -33,4 +48,11 @@ export class SubComponent implements OnInit, OnDestroy {
     console.log(`invoked multiply ${x} * ${y} = ${result2}`);
   }
 
+  private performSubscriptions() {
+    this.name$.subscribe(
+      (name) => console.log(`emit for id ${this.id}`, name),
+      () => void 0,
+      () => console.log(`complete for id ${this.id}`)
+    );
+  }
 }

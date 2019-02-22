@@ -1,6 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {PropertyStream} from '../../decorators/property-stream';
-import {Observable} from 'rxjs';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-main',
@@ -9,25 +7,23 @@ import {Observable} from 'rxjs';
 })
 export class MainComponent implements OnInit {
 
-  @Input()
-  public name: string;
-
-  @PropertyStream()
-  public readonly name$: Observable<string>;
-
-  public subComponentVisible = true;
+  public name = 'value(0)';
+  public subComponentsVisible = true;
 
   constructor() {
-    this.handleSubComponent();
+    this.handleName();
+    this.handleSubComponents();
   }
 
   public ngOnInit() {
   }
 
-  private handleSubComponent() {
-    setInterval(() => {
-      this.subComponentVisible = !this.subComponentVisible;
-    }, 2000);
+  private handleSubComponents() {
+    setInterval(() => this.subComponentsVisible = !this.subComponentsVisible, 4000);
   }
 
+  private handleName() {
+    let counter = 0;
+    setInterval(() => this.name = `value(${counter++})`, 1000);
+  }
 }
