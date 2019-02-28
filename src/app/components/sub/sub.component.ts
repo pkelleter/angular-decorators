@@ -2,6 +2,8 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Memoize} from '../../decorators/memoize';
 import {PropertyStream} from '../../decorators/property-stream';
 import {Observable} from 'rxjs';
+import {EmitOnDestroy} from '../../decorators/emit-on-destroy';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-sub',
@@ -18,6 +20,9 @@ export class SubComponent implements OnInit, OnDestroy {
 
   @PropertyStream()
   public name$: Observable<string>;
+
+  @EmitOnDestroy()
+  public destroy$: Observable<void>;
 
   constructor() {
   }
@@ -49,7 +54,9 @@ export class SubComponent implements OnInit, OnDestroy {
   }
 
   private performSubscriptions() {
-    this.name$.subscribe(
+    this.name$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(
       (name) => console.log(`emit for id ${this.id}`, name),
       () => void 0,
       () => console.log(`complete for id ${this.id}`)

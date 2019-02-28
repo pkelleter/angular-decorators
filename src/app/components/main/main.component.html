@@ -3,11 +3,11 @@
 <div>
   <app-sub *ngIf="subComponentsVisible"
            [id]="1"
-           [name]="name"></app-sub>
+           [name]="'a-' + name"></app-sub>
   <app-sub *ngIf="subComponentsVisible"
            [id]="2"
-           [name]="name"></app-sub>
+           [name]="'b-' + name"></app-sub>
   <app-sub *ngIf="subComponentsVisible"
            [id]="3"
-           [name]="name"></app-sub>
+           [name]="'c-' + name"></app-sub>
 </div>

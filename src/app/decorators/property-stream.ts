@@ -1,4 +1,5 @@
 import {ReplaySubject} from 'rxjs';
+import {interposeAfterFunction, interposeBeforeFunction} from './helpers/decorator-helpers';
 
 /**
  * PropertyStream automatically creates a RxJS stream to a corresponding property.
@@ -11,53 +12,55 @@ import {ReplaySubject} from 'rxjs';
  */
 
 export function PropertyStream(sourceKey?: string) {
-
   return function(target: any, propertyKey: string) {
+    interposeBeforeFunction(target, 'ngOnInit', function() {
+      getSubject(this, propertyKey, sourceKey);
+    });
 
-    const originalDestroy = target.ngOnDestroy;
-    target.ngOnDestroy = function() {
-      getSubject(this).complete();
-      if (typeof originalDestroy === 'function') {
-        originalDestroy.apply(this);
-      }
-    };
+    interposeAfterFunction(target, 'ngOnDestroy', function() {
+      getSubject(this, propertyKey, sourceKey).complete();
+    });
 
-    Object.defineProperty(target, getSourceKey(), {
+    Object.defineProperty(target, getDerivedSourceKey(propertyKey, sourceKey), {
       get() {
-        return this[`__${getSourceKey()}Value`];
+        return this[getValueKey(propertyKey, sourceKey)];
       },
       set(value) {
-        this[`__${getSourceKey()}Value`] = value;
-        getSubject(this).next(value);
+        this[getValueKey(propertyKey, sourceKey)] = value;
+        getSubject(this, propertyKey, sourceKey).next(value);
       }
     });
 
     Object.defineProperty(target, propertyKey, {
       get() {
-        return getSubject(this).asObservable();
+        return getSubject(this, propertyKey, sourceKey).asObservable();
       }
     });
-
-    function getSubject(instance: object) {
-      const subjectKey = `__${getSourceKey()}Subject`;
-      if (!instance[subjectKey]) {
-        instance[subjectKey] = new ReplaySubject<void>(1);
-      }
-      return instance[subjectKey];
-    }
-
-    function getSourceKey() {
-      if (sourceKey) {
-        return sourceKey;
-      }
-      const derivedSourceKey = propertyKey.replace(/\$/g, '');
-      if (propertyKey === derivedSourceKey) {
-        throw  new Error('No source-key provided for PropertyStream decorator. ' +
-          'Source-key could not be derived, since the annotated property-key does not contain a "$" sign.');
-      }
-      return derivedSourceKey;
-    }
-
   };
+}
 
+function getSubject(instance: object, propertyKey: string, sourceKey: string) {
+  const derivedSourceKey = getDerivedSourceKey(propertyKey, sourceKey);
+  const subjectKey = `__${derivedSourceKey}Subject`;
+  if (!instance[subjectKey]) {
+    instance[subjectKey] = new ReplaySubject<unknown>(1);
+  }
+  return instance[subjectKey];
+}
+
+function getDerivedSourceKey(propertyKey: string, sourceKey: string) {
+  if (sourceKey) {
+    return sourceKey;
+  }
+  const derivedSourceKey = propertyKey.replace(/\$/g, '');
+  if (propertyKey === derivedSourceKey) {
+    throw  new Error('No source-key provided for PropertyStream decorator. ' +
+      'Source-key could not be derived, since the annotated property-key does not contain a "$" sign.');
+  }
+  return derivedSourceKey;
+}
+
+function getValueKey(propertyKey: string, sourceKey: string) {
+  const derivedSourceKey = getDerivedSourceKey(propertyKey, sourceKey);
+  return `__${derivedSourceKey}Value`;
 }
