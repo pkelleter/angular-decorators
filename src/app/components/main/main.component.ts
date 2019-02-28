@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {WebStorage} from '../../decorators/web-storage';
 
 @Component({
   selector: 'app-main',
@@ -6,6 +7,12 @@ import {Component, OnInit} from '@angular/core';
   styleUrls: ['./main.component.scss']
 })
 export class MainComponent implements OnInit {
+
+  @WebStorage('customWebStorageKey')
+  public localStorage = 'change me';
+
+  @WebStorage(null, 'session')
+  public sessionStorage = 'change me';
 
   public name = 'value(0)';
   public subComponentsVisible = true;

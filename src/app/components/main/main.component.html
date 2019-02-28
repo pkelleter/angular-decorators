@@ -1,5 +1,16 @@
+<div>
+  <label for="localStorage">Local Storage</label><br>
+  <input id="localStorage" [(ngModel)]="localStorage"/>
+</div>
+
+<div>
+  <label for="sessionStorage">Session Storage</label><br>
+  <input id="sessionStorage" [(ngModel)]="sessionStorage"/>
+</div>
+
+<hr>
 <div>Main Component</div>
-<div>{{ name }}</div>
+<div>{{ name }}</div><br>
 <div>
   <app-sub *ngIf="subComponentsVisible"
            [id]="1"
@@ -7,7 +18,4 @@
   <app-sub *ngIf="subComponentsVisible"
            [id]="2"
            [name]="'b-' + name"></app-sub>
-  <app-sub *ngIf="subComponentsVisible"
-           [id]="3"
-           [name]="'c-' + name"></app-sub>
 </div>
