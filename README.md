@@ -32,6 +32,14 @@ If a new cache should be created for every instance of the given class instead, 
 Creates a subject which emits once and immediately completes after ngOnDestroy was called.
 This can be used to easily implement the takeUntil() pattern for subscriptions which have to be canceled on a component's destroy hook.
 
+For angular based frameworks that have their own lifecycle-hooks like e.g. ionic, hooks can be specified via configuration. Example:
+```
+@EmitOnDestroy({
+    initialize: 'ionViewDidEnter',
+    terminate: 'ionViewDidLeave'
+})
+```
+
 ## WebStorage
 
 <b>@WebStorage(key?, type?)</b><br>
