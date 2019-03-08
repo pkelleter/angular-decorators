@@ -1,6 +1,6 @@
 import {ReplaySubject} from 'rxjs';
 import {interposeAfterFunction, interposeBeforeFunction} from './helpers/decorator-helpers';
-
+import {EmitOnDestroyConfig} from './interfaces/emit-on-destroy-config';
 /**
  * EmitOnDestroy creates a subject which emits once and immediately completes after ngOnDestroy was called.
  * This can be used to easily implement the takeUntil() pattern for subscriptions which have to be canceled on a component's destroy hook.
@@ -14,17 +14,12 @@ import {interposeAfterFunction, interposeBeforeFunction} from './helpers/decorat
  * 
  */
 
-export interface IEmitOnDestroyConfig {
-  initialize: string;
-  terminate: string;
-}
-
-const defaultConfig: IEmitOnDestroyConfig = {
+const defaultConfig: EmitOnDestroyConfig = {
   initialize: 'ngOnInit',
   terminate: 'ngOnDestroy'
 };
 
-export function EmitOnDestroy(config: IEmitOnDestroyConfig = defaultConfig) {
+export function EmitOnDestroy(config: EmitOnDestroyConfig = defaultConfig) {
   return function(target: any, propertyKey: string) {
     interposeBeforeFunction(target, config.initialize, function() {
       this[propertyKey] = new ReplaySubject<void>(1);
